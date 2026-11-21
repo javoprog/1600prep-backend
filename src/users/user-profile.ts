@@ -5,13 +5,6 @@ export const publicUserSelect = {
   name: true,
   email: true,
   passwordHash: true,
-  avatarUrl: true,
-  googleId: true,
-  googleEmail: true,
-  telegramId: true,
-  telegramUsername: true,
-  telegramFirstName: true,
-  telegramPhotoUrl: true,
   createdAt: true,
   updatedAt: true,
 } satisfies Prisma.UserSelect;
@@ -23,15 +16,7 @@ export type RawUserRecord = Prisma.UserGetPayload<{
 export interface PublicUserProfile {
   id: string;
   name: string;
-  email: string | null;
-  avatarUrl: string | null;
-  hasPassword: boolean;
-  googleConnected: boolean;
-  googleEmail: string | null;
-  telegramConnected: boolean;
-  telegramId: string | null;
-  telegramUsername: string | null;
-  telegramFirstName: string | null;
+  email: string;
   createdAt: Date;
 }
 
@@ -40,14 +25,6 @@ export function toPublicUserProfile(user: RawUserRecord): PublicUserProfile {
     id: user.id,
     name: user.name,
     email: user.email,
-    avatarUrl: user.avatarUrl || user.telegramPhotoUrl || null,
-    hasPassword: Boolean(user.passwordHash),
-    googleConnected: Boolean(user.googleId),
-    googleEmail: user.googleEmail,
-    telegramConnected: Boolean(user.telegramId),
-    telegramId: user.telegramId,
-    telegramUsername: user.telegramUsername,
-    telegramFirstName: user.telegramFirstName,
     createdAt: user.createdAt,
   };
 }

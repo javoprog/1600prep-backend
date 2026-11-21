@@ -4,7 +4,6 @@ import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ResultsModule } from './results/results.module';
-import { TelegramModule } from './telegram/telegram.module';
 
 @Module({
   imports: [
@@ -13,7 +12,6 @@ import { TelegramModule } from './telegram/telegram.module';
     }),
     PrismaModule,
     AuthModule,
-    TelegramModule,
     ResultsModule,
   ],
   controllers: [AppController],

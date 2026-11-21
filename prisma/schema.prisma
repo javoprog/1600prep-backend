@@ -8,39 +8,16 @@ datasource db {
 }
 
 model User {
-  id                    String                  @id @default(uuid())
-  name                  String
-  email                 String?                 @unique
-  passwordHash          String?
-  avatarUrl             String?
+  id           String                  @id @default(uuid())
+  name         String
+  email        String                  @unique
+  passwordHash String
 
-  // Google Auth provider fields
-  googleId              String?                 @unique
-  googleEmail           String?
+  attempts     QuestionAttempt[]
+  sessions     PracticeSessionRecord[]
 
-  // Telegram Auth provider fields
-  telegramId            String?                 @unique
-  telegramUsername      String?
-  telegramFirstName     String?
-  telegramPhotoUrl      String?
-  telegramLinkCode      String?                 @unique
-  telegramLinkExpiresAt DateTime?
-
-  attempts              QuestionAttempt[]
-  sessions              PracticeSessionRecord[]
-
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
-}
-
-model TelegramAuthSession {
-  id           String   @id @default(uuid())
-  sessionToken String   @unique
-  code         String   @unique
-  status       String   @default("PENDING") // PENDING | COMPLETED
-  userId       String?
-  expiresAt    DateTime
-  createdAt    DateTime @default(now())
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
 }
 
 model PracticeSessionRecord {
