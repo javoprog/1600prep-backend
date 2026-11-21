@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String                  @id @default(uuid())
+  name                  String
+  email                 String?                 @unique
+  passwordHash          String?
+  avatarUrl             String?
+
+  // Google Auth provider fields
+  googleId              String?                 @unique
+  googleEmail           String?
+
+  // Telegram Auth provider fields
+  telegramId            String?                 @unique
+  telegramUsername      String?
+  telegramFirstName     String?
+  telegramPhotoUrl      String?
+  telegramLinkCode      String?                 @unique
+  telegramLinkExpiresAt DateTime?
+
+  attempts              QuestionAttempt[]
+  sessions              PracticeSessionRecord[]
+
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+}
+
+model TelegramAuthSession {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  code         String   @unique
+  status       String   @default("PENDING") // PENDING | COMPLETED
+  userId       String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+}
+
+model PracticeSessionRecord {
+  id              String    @id @default(uuid())
+  clientSessionId String
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject         String    // 'rw' | 'math'
+  mode            String    // 'custom' | 'mistakes' | 'retry'
+  title           String
+  totalQuestions  Int
+  answeredCount   Int
+  correctCount    Int
+  totalTimeMs     Int
+  startedAt       DateTime
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([userId, clientSessionId])
+  @@index([userId, startedAt])
+}
+
+model QuestionAttempt {
+  id                String   @id @default(uuid())
+  clientAttemptId   String
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clientSessionId   String?
+  questionId        String
+  subject           String   // 'rw' | 'math'
+  domain            String
+  skill             String
+  difficulty        String?  // 'E' | 'M' | 'H'
+  selectedAnswer    String
+  correctAnswerJson String   // JSON array string e.g. '["B"]'
+  isCorrect         Boolean
+  timeSpentMs       Int
+  attemptedAt       DateTime
+  createdAt         DateTime @default(now())
+
+  @@unique([userId, clientAttemptId])
+  @@index([userId, attemptedAt])
+  @@index([userId, questionId])
+}
